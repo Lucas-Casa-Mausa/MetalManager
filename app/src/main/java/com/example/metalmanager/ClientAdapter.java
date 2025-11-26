@@ -8,9 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.metamanager.R;
-
 import java.util.List;
 
 public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.ClientViewHolder> {
@@ -63,6 +60,11 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.ClientView
         return clientList.size();
     }
 
+    public void updateList(List<Client> newList) {
+        this.clientList = newList;
+        notifyDataSetChanged();
+    }
+
     static class ClientViewHolder extends RecyclerView.ViewHolder {
         CardView cardClient;
         TextView tvClientName;
@@ -71,7 +73,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.ClientView
 
         public ClientViewHolder(@NonNull View itemView) {
             super(itemView);
-            cardClient = itemView.findViewById(R.id.card);
+            cardClient = itemView.findViewById(R.id.cardClient);
             tvClientName = itemView.findViewById(R.id.tvClientName);
             tvClientCnpj = itemView.findViewById(R.id.tvClientCnpj);
             btnDelete = itemView.findViewById(R.id.btnDelete);

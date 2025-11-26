@@ -8,9 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.metamanager.R;
-
 import java.util.List;
 
 public class ServiceOrderAdapter extends RecyclerView.Adapter<ServiceOrderAdapter.ServiceOrderViewHolder> {
@@ -41,7 +38,7 @@ public class ServiceOrderAdapter extends RecyclerView.Adapter<ServiceOrderAdapte
         ServiceOrder order = orderList.get(position);
 
         holder.tvOrderStatus.setText(order.getStatus());
-        holder.tvOrderDescription.setText(order.getDescricaoTruncada());
+        holder.tvOrderDescription.setText(order.getDescricaoServico());
 
         // Click no card para editar
         holder.cardOrder.setOnClickListener(v -> {
@@ -61,6 +58,11 @@ public class ServiceOrderAdapter extends RecyclerView.Adapter<ServiceOrderAdapte
     @Override
     public int getItemCount() {
         return orderList.size();
+    }
+
+    public void updateList(List<ServiceOrder> newList) {
+        this.orderList = newList;
+        notifyDataSetChanged();
     }
 
     static class ServiceOrderViewHolder extends RecyclerView.ViewHolder {

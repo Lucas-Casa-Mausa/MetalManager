@@ -6,17 +6,20 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.metamanager.R;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private ImageButton btnBack;
+    private TextView tvTitle;
     private TextInputEditText etName, etCnpj, etPhone;
     private Button btnSave;
+
+    private boolean isEditMode = false;
+    private int clientId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +27,42 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         initializeViews();
+        checkEditMode();
         setupListeners();
         setupMasks();
     }
 
     private void initializeViews() {
         btnBack = findViewById(R.id.btnBack);
+        tvTitle = findViewById(R.id.tvTitle);
         etName = findViewById(R.id.etName);
         etCnpj = findViewById(R.id.etCnpj);
         etPhone = findViewById(R.id.etPhone);
         btnSave = findViewById(R.id.btnSave);
+    }
+
+    private void checkEditMode() {
+        // Verifica se recebeu dados para edição via Intent
+        if (getIntent().hasExtra("client_id")) {
+            isEditMode = true;
+            clientId = getIntent().getIntExtra("client_id", -1);
+            String name = getIntent().getStringExtra("client_name");
+            String cnpj = getIntent().getStringExtra("client_cnpj");
+            String phone = getIntent().getStringExtra("client_phone");
+
+            // Muda o título e texto do botão
+            tvTitle.setText("Editar Cliente");
+            btnSave.setText("ATUALIZAR");
+
+            // Preenche os campos
+            etName.setText(name);
+            etCnpj.setText(cnpj);
+            etPhone.setText(phone);
+        } else {
+            isEditMode = false;
+            tvTitle.setText("Cadastrar Cliente");
+            btnSave.setText("CADASTRAR");
+        }
     }
 
     private void setupListeners() {
@@ -175,37 +204,33 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Salvar cliente
-        saveClient(name, cnpj, phone);
+        // Salvar ou atualizar cliente
+        if (isEditMode) {
+            updateClient(clientId, name, cnpj, phone);
+        } else {
+            saveClient(name, cnpj, phone);
+        }
     }
 
     private void saveClient(String name, String cnpj, String phone) {
-        // TODO: Implementar salvamento no banco de dados ou API
+        // TODO: Implementar salvamento no banco de dados
+        Toast.makeText(this, "Cliente cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+        finish();
+    }
 
-        Toast.makeText(this, "Cliente salvo com sucesso!", Toast.LENGTH_SHORT).show();
-
-        // Limpar campos
-        etName.setText("");
-        etCnpj.setText("");
-        etPhone.setText("");
-
-        // Voltar para tela anterior ou fechar
+    private void updateClient(int id, String name, String cnpj, String phone) {
+        // TODO: Implementar atualização no banco de dados
+        Toast.makeText(this, "Cliente atualizado com sucesso!", Toast.LENGTH_SHORT).show();
         finish();
     }
 
     private boolean isValidCnpj(String cnpj) {
-        // Remove máscara
         String cleanCnpj = cnpj.replaceAll("[^\\d]", "");
-
-        // CNPJ deve ter 14 dígitos
         return cleanCnpj.length() == 14;
     }
 
     private boolean isValidPhone(String phone) {
-        // Remove máscara
         String cleanPhone = phone.replaceAll("[^\\d]", "");
-
-        // Telefone deve ter 10 ou 11 dígitos
         return cleanPhone.length() == 10 || cleanPhone.length() == 11;
     }
 }
